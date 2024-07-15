@@ -59,7 +59,9 @@ class Colaborador
 
     public function setDtCadastro($dtCadastro)
     {
-        $this->dtCadastro = $dtCadastro;
+        
+        $date = str_replace('/', '-', $dtCadastro);
+        $this->dtCadastro = date('Y-m-d H:i:s', strtotime($date));
     }
 
     public function getDtCadastro()
@@ -69,7 +71,8 @@ class Colaborador
 
     public function setDtAdmissao($dtAdmissao)
     {
-        $this->dtAdmissao = $dtAdmissao;
+        $date = str_replace('/', '-', $dtAdmissao);
+        $this->dtAdmissao = date('Y-m-d H:i:s', strtotime($date));
     }
 
     public function getDtAdmissao()

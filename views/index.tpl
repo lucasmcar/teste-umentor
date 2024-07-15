@@ -166,7 +166,7 @@ $(document).ready(function() {
                         '</td><td>' + colaborador.nome + 
                         '</td><td>' + colaborador.email + 
                         '</td><td>' + colaborador.situacao + 
-                        '</td><td>' + colaborador.admissao + 
+                        '</td><td>' + colaborador.admissao  + 
                         '</td><td>' + colaborador.cadastro +
                         '</td><td>' + colaborador.atualizacao +
                         '</td><td><a href="/editar/colaborador/'+colaborador.id+'" id="edit-btn" class="edit-btn"  data-id="' + colaborador.id + '" ' +
@@ -305,7 +305,7 @@ $(document).ready(function() {
             var nome = $(this).data('nome');
             var email = $(this).data('email');
             var situacao = $(this).data('situacao');
-            var admissao = $(this).data('admissao');
+            var admissao = formatarDateTime($(this).data('admissao'));
 
             if(situacao === 'C'){
                 $('#campoAdmissaoEdit').show();
@@ -403,7 +403,23 @@ $('#searchInput').on('keyup', function() {
     });
 
 carregaColaborador();
+
+function formatarDateTime(dateTimeString) {
+    // Divida a string de data e hora
+    var [datePart, timePart] = dateTimeString.split(' ');
+
+    // Divida a data em partes [ano, mês, dia]
+    var [ano, mes, dia] = datePart.split('-');
+
+    // Reorganize a data no formato dd/mm/yyyy
+    var formattedDate = dia + '/' + mes + '/' + ano;
+
+    // Reorganize a data e a hora no formato dd/mm/yyyy hh:mm:ss
+    return formattedDate + ' ' + timePart;
+}
 });
+
+
 
   
 </script>

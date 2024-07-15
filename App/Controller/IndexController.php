@@ -84,7 +84,7 @@ class IndexController
         $colaboradorObj->setNome($colaborador['nome']);
         $colaboradorObj->setEmail($colaborador['email']);
         $colaboradorObj->setSituacao($colaborador['situacao']);
-        $colaboradorObj->setDtAdmissao($colaborador['admissao']);
+        $colaboradorObj->setDtAdmissao(\DateTime::createFromFormat('d/m/Y H:i:s', $colaborador['admissao'])->format("Y-m-d H:i:s"));
 
         $colaboradorService->save($colaboradorObj);
     }
