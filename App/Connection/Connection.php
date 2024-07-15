@@ -13,7 +13,7 @@ class Connection
     public static function getConnection()
     {
         try{
-            self::$pdo = new PDO('mysql:host=localhost;dbname=teste_umentor', 'root', 'root');
+            self::$pdo = new PDO('mysql:host=localhost;dbname=teste_umentor_db', 'root', 'root');
             self::$pdo->setAttribute(PDO::ERRMODE_EXCEPTION, PDO::ATTR_ERRMODE);
             return self::$pdo;
         }catch(PDOException $ex){

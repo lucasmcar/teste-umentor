@@ -3,12 +3,77 @@
 namespace App\Controller;
 
 use App\Core\View\View;
+use App\Helper\InputFilterHelper;
+use App\Model\Colaborador;
+use App\Service\ColaboradorService;
+use App\Repository\ColaboradorRepository;
 
 class IndexController
 {
     public function index()
     {
-        $data = []
-        return new View('index', $data);
+        $colaboradorRepository = new ColaboradorRepository();
+        $colaboradorService = new ColaboradorService($colaboradorRepository);
+        $data = [
+            'total' => $colaboradorRepository->total(),
+            'title' => 'Teste umentor',
+            'dados' => $colaboradorService->getAll()
+        ];
+        return new View('index',$data);
+    }
+
+    public function list($pagina = 1, $limite = 10)
+    {
+
+        $limite = isset($_GET['limite']) ? intval($_GET['limite']) : 10;
+        $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $offset = ($pagina - 1) * $limite;
+
+        $colaboradorRepository = new ColaboradorRepository();
+        $colaboradorService = new ColaboradorService($colaboradorRepository);
+
+        $colaboradores = $colaboradorService->pagination($limite, $offset);
+        $data = [
+            'dados' => $colaboradores,
+            'total' => $colaboradorService->total(),
+            'limite' => $limite,
+            'pagina' => $pagina
+        ];
+        
+        echo json_encode($data);
+    }
+
+    public function new()
+    {
+        $colaborador = InputFilterHelper::filterInputs(INPUT_POST, 
+        [
+            'nome',
+            'email',
+            'situacao',
+            'cadastro'
+        ]);
+
+        $colaboradorObj = new Colaborador();
+        $colaboradorObj->setNome($colaborador['nome']);
+        $colaboradorObj->setEmail($colaborador['email']);
+        $colaboradorObj->setSituacao($colaborador['situacao']);
+        $colaboradorObj->setDtCadastro($colaborador['cadastro']);
+
+        switch($colaborador['situacao']){
+            case 'T':
+                $colaboradorRepository = new ColaboradorRepository();
+                $colaboradorService = new ColaboradorService($colaboradorRepository);
+                print_r($colaboradorService);
+                $colaboradorService->create($colaboradorObj);
+        }
+    }
+
+    public function delete($id)
+    {
+        $colaboradorRepository = new ColaboradorRepository();
+        $colaboradorService = new ColaboradorService($colaboradorRepository);
+
+        $colaboradorService->delete($id);
     }
 }
+

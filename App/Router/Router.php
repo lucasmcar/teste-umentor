@@ -19,28 +19,28 @@ class Router  implements IRouter
         $this->route = $route;
     }
 
-    public function get($path, $controller, $action = '' , $middleware = [])
+    public function get($path, $controller, $action = '')
     {
-        $this->addRoute('GET', $path, $controller, $action, $middleware);
+        $this->addRoute('GET', $path, $controller, $action);
     }
 
-    public function post($path, $controller, $action = '', $middleware = [])
+    public function post($path, $controller, $action = '')
     {
-        $this->addRoute('POST', $path, $controller, $action, $middleware);
+        $this->addRoute('POST', $path, $controller, $action);
     }
 
-    public function put($path, $controller, $action = '', $middleware = [])
+    public function put($path, $controller, $action = '')
     {
-        $this->addRoute('PUT', $path, $controller, $action, $middleware);
+        $this->addRoute('PUT', $path, $controller, $action);
     }
 
-    public function delete($path, $controller, $action = '', $middleware = [])
+    public function delete($path, $controller, $action = '')
     {
-        $this->addRoute('DELETE', $path, $controller, $action, $middleware);
+        $this->addRoute('DELETE', $path, $controller, $action, );
     }
 
    
-    private function addRoute($method, $path, $controller, $action = '', $middleware = [])
+    private function addRoute($method, $path, $controller, $action = '')
     {
         $route = $this->route->add($method, $path, $controller, $action);
         /*$this->routes[] = $route;*/

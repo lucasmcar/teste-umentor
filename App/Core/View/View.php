@@ -40,7 +40,7 @@ class View
 
     public function render($template)
     {
-        $templatePath = __DIR__.'/../../views/' . $template . '.tpl';
+        $templatePath = __DIR__.'/../../../views/' . $template . '.tpl';
 
         if (!file_exists($templatePath)) {
             throw new \Exception("Template $templatePath not found!");
@@ -54,7 +54,7 @@ class View
 
 
         if ($this->layout) {
-            $layoutPath =  __DIR__.'/../../views/layouts/' . $this->layout . '.tpl';
+            $layoutPath =  __DIR__.'/../../../views/layouts/' . $this->layout . '.tpl';
     
             if (!file_exists($layoutPath)) {
                 throw new \Exception("Layout $layoutPath not found!");
