@@ -2,12 +2,21 @@
 <div class="container">
     <h2>{{ $title }}</h2>
 
-    <button type="button" class="btn btn-primary add-btn" id="add-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
-        Adicionar Usuário
-    </button>
+    <div class="row">
+        <div class="col-s6">
+            <button type="button" class="btn btn-primary add-btn" id="add-btn" data-bs-toggle="modal" data-bs-target="#addColaboradorModal">
+                Adicionar Colaborador
+            </button>
+        </div>
+    </div>
 
     <hr>
-    <table class="table table-striped mt-3" id="userTable">
+    <div class="container mt-3 mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
+    </div>
+    <h2>Lista de colaboradores</h2>
+    <table class="table table-striped mt-3" id="colaboradorTable">
+    <caption>*T = Em Teste, D = Demitido, C = Contratado</caption>
         <thead>
             <th>ID</th>
             <th>Nome</th>
@@ -33,11 +42,11 @@
 
 
 <!-- Modal de Adição -->
-<div class="modal fade" id="addColaboradorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addColaboradorModal" tabindex="-1" aria-labelledby="addColaboradorModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addColaboradorModalLabel">Adicionar Usuário</h5>
+                <h5 class="modal-title" id="addColaboradorModalLabel">Adicionar Colaborador</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -60,7 +69,7 @@
                             <option value="D">Demitido</option>
                         </select>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-3" id="campoAdmissao" style="display: none;">
                         <label for="txtAdmissao">Data de Admissão</label>
                         <input type="text" class="form-control" id="txtAdmissao" name="admissao" >
                     </div>
@@ -83,7 +92,7 @@
                 <form id="editColaboradorForm">
                     <div class="form-group mb-3">
                         <label for="txtNome">Nome</label>
-                        <input type="text" class="form-control" id="txtNomeedt" name="nome" >
+                        <input type="text" class="form-control" id="txtNomeEdt" name="nome" >
                     </div>
                     <div class="form-group mb-3">
                         <label for="txtEmail">Email</label>
@@ -92,16 +101,17 @@
                     <div class="form-group mb-3">
                         <label for="slcSituacao">Situação</label>
                         <select class="form-select" name="situacao" aria-label="Default select example" id="slcSituacaoEdt">
-                            <option selected value="">Situação</option>
+                            <option value="">Situação</option>
                             <option value="T">Em Teste</option>
                             <option value="C">Contratado</option>
                             <option value="D">Demitido</option>
                         </select>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="txtAdmissao">Data de Admissão</label>
-                        <input type="text" class="form-control" id="txtAdmissao" name="admissao" >
+                    <div class="form-group mb-3" id="campoAdmissaoEdit" style="display: none;">
+                        <label for="txtAdmissaoEdt">Data de Admissão</label>
+                        <input type="text" class="form-control" id="txtAdmissaoEdt" name="admissao" >
                     </div>
+                    <input type="hidden" id="txtColaboradorId" name="id">
                     <button type="submit" class="btn btn-primary">Adicionar</button>
                 </form>
             </div>
@@ -116,10 +126,7 @@
 <script>
 
 
-$(document).on('click', '.add-btn', function() {
-    var addColaboradorModal = new bootstrap.Modal(document.getElementById('addColaboradorModal'));
-    addColaboradorModal.show();
-});
+
 
 $(document).on('click', '.edit-btn', function() {
     var editColaboradorModal = new bootstrap.Modal(document.getElementById('editColaboradorModal'));
@@ -133,17 +140,16 @@ $(document).ready(function() {
         $('#addColaboradorModal').modal('show');
     })
     
-    // Exemplo de abrir o modal ao clicar em um botão
     $('#edit-btn').on('click', function() {
-        $('#addColaboradorModal').modal('show');
+        $('#editColaboradorModal').modal('show');
     });
 
     var paginaAtual = 1;
     var limite = 10;
-    // Função para carregar os dados dos usuários na tabela
+    
     function carregaColaborador(pagina = 1) {
         $.ajax({
-            url: '/list', // URL do script PHP que retorna os dados dos usuários
+            url: '/list', 
             data: {
                 pagina: pagina,
                 limite: limite
@@ -151,27 +157,24 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                console.log($('#total_results'));
-                var userTable = $('#userTable tbody');
-                userTable.empty(); // Limpa a tabela
+                var colaboradorTable = $('#colaboradorTable tbody');
+                colaboradorTable.empty(); // Limpa a tabela
                 $.each(response['dados'], function(index, colaborador) {
                     
-                    if(colaborador.situacao == 'T'){
-                        colaborador.situacao = 'Em teste';
-                    } else if(colaborador.situacao == 'D'){
-                        colaborador.situacao = 'Demitido';
-                    } else {
-                        colaborador.situacao = 'Contratado';
-                    }
-                    
-                    userTable.append('<tr><td>' + colaborador.id + 
+                    colaboradorTable.append(
+                        '<tr><td>' + colaborador.id + 
                         '</td><td>' + colaborador.nome + 
                         '</td><td>' + colaborador.email + 
                         '</td><td>' + colaborador.situacao + 
                         '</td><td>' + colaborador.admissao + 
                         '</td><td>' + colaborador.cadastro +
                         '</td><td>' + colaborador.atualizacao +
-                        '</td><td><a href="/editar/colaborador/'+colaborador.id+'" id="edit-btn" class="edit-btn"><span class="material-symbols-outlined" style="color: yellow;">edit</span></a>'+
+                        '</td><td><a href="/editar/colaborador/'+colaborador.id+'" id="edit-btn" class="edit-btn"  data-id="' + colaborador.id + '" ' +
+                                        'data-nome="' + colaborador.nome + '" ' +
+                                        'data-id="' +colaborador.id + '" '+
+                                        'data-email="' + colaborador.email + '" ' +
+                                        'data-situacao="' + colaborador.situacao + '" '+ 
+                                        'data-admissao="' + colaborador.admissao + '"><span class="material-symbols-outlined" style="color: yellow;">edit</span></a>'+
                         '|<a href="/delete/colaborador/'+colaborador.id+'" class="delete-btn"><span class="material-symbols-outlined" style="color: red;">delete</span></a>'+
                         '</td></tr>'
                     );
@@ -183,22 +186,66 @@ $(document).ready(function() {
     }
 
     function atualizaPaginacao(pagina, totalPaginas) {
-        var paginacao = $('#pagination');
+        var paginacao = $('ul.pagination');
         paginacao.empty();
 
-        if (totalPaginas > 1) {
-            for (var i = 1; i <= totalPaginas; i++) {
-                paginacao.append(
-                    '<li class="page-item ' + (i === pagina ? 'active' : '') + '">' +
-                        '<a class="page-link" href="#" data-page="' + i + '">' + i + '</a>' +
-                    '</li>'
-                );
-            }
+        // Botão "Anterior"
+        if (pagina > 1) {
+            paginacao.append(
+                '<li class="page-item">' +
+                    '<a class="page-link" href="#" data-page="' + (pagina - 1) + '"> < </a>' +
+                '</li>'
+            );
+        } else {
+            paginacao.append(
+                '<li class="page-item disabled">' +
+                    '<a class="page-link" href="#"> < </a>' +
+                '</li>'
+            );
+        }
+        
+
+        
+        for (var i = 1; i <= totalPaginas; i++) {
+            paginacao.append(
+                '<li class="page-item ' + (i === pagina ? 'active' : '') + '">' +
+                    '<a class="page-link" href="#" data-page="' + i + '">' + i + '</a>' +
+                '</li>'
+            );
+        }
+        
+
+        if (pagina < totalPaginas) {
+            paginacao.append(
+                '<li class="page-item">' +
+                    '<a class="page-link" href="#" data-page="' + (pagina + 1) + '"> > </a>' +
+                '</li>'
+            );
+        } else {
+            paginacao.append(
+                '<li class="page-item disabled">' +
+                    '<a class="page-link" href="#"> > </a>' +
+                '</li>'
+            );
         }
     }
 
-    // Chama a função para carregar os dados dos usuários quando a página é carregada
     
+    function toggleAdmissionDate(selectElement, dateDivId) {
+        if ($(selectElement).val() === 'C') {
+            $(dateDivId).show();
+        } else {
+            $(dateDivId).hide();
+        }
+    }
+
+    $('#slcSituacao').on('change', function() {
+        toggleAdmissionDate(this, '#campoAdmissao');
+    });
+
+    $('#slcSituacaoEdt').on('change', function() {
+        toggleAdmissionDate(this, '#campoAdmissaoEdit');
+    });
 
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
@@ -233,14 +280,13 @@ $(document).ready(function() {
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                $('#addUserModal').modal('hide');
+                $('#addColaboradorModal').modal('hide');
                 carregaColaborador(paginaAtual);
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso',
                     text: 'Usuário adicionado com sucesso.'
                 });
-                
             },
             error: function() {
                 Swal.fire({
@@ -254,24 +300,49 @@ $(document).ready(function() {
 
     $(document).on('click', '.edit-btn', function(e) {
             e.preventDefault();
-            var userId = $(this).data('id');
-            var userName = $(this).data('name');
-            $('#editName').val(userName);
-            $('#editUserId').val(userId);
-            var editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
-            editUserModal.show();
+
+            var id = $(this).data('id');
+            var nome = $(this).data('nome');
+            var email = $(this).data('email');
+            var situacao = $(this).data('situacao');
+            var admissao = $(this).data('admissao');
+
+            if(situacao === 'C'){
+                $('#campoAdmissaoEdit').show();
+            }
+
+            $('#txtColaboradorId').val(id);
+            $('#txtNomeEdt').val(nome);
+            $('#txtEmailEdt').val(email);
+            $('#slcSituacaoEdt').val(situacao);
+            $('#txtAdmissaoEdt').val(admissao);
+
+           
         });
 
         $('#editColaboradorForm').on('submit', function(e) {
             e.preventDefault();
+            var id = $('#txtColaboradorId').val();
             $.ajax({
-                url: '/editar/colaborador',
+                url: '/editar/colaborador/'+id,
                 type: 'POST',
                 data: $(this).serialize(),
+                
                 success: function(response) {
-                    $('#editUserModal').modal('hide');
-                    loadUsers(currentPage);
-                    alert('Usuário editado com sucesso.');
+                    $('#editColaboradorModal').modal('hide');
+                    carregaColaborador(paginaAtual);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso',
+                        text: 'Colaborador atualizado com sucesso.'
+                    });
+                },
+                error : function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: 'Ocorreu um erro ao atualizar.'
+                    });
                 }
             });
         });
@@ -283,7 +354,6 @@ $(document).ready(function() {
         e.preventDefault();
         var href = $(this).attr('href');
         var row = $(this).closest('tr');
-        console.log(href);
         Swal.fire({
             title: 'Tem certeza?',
             text: "Você não poderá reverter isso!",
@@ -320,6 +390,18 @@ $(document).ready(function() {
             }
         });
 });
+
+$('#searchInput').on('keyup', function() {
+    var value = $(this).val().toLowerCase();
+    $("#colaboradorTable tbody tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $(document).on('hidden.bs.modal', '#addUserModal, #editUserModal', function () {
+        $('.modal-backdrop').remove();
+    });
+
 carregaColaborador();
 });
 

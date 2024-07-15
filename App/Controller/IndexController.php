@@ -50,7 +50,7 @@ class IndexController
             'nome',
             'email',
             'situacao',
-            'cadastro'
+            'cadastro',
         ]);
 
         $colaboradorObj = new Colaborador();
@@ -58,14 +58,35 @@ class IndexController
         $colaboradorObj->setEmail($colaborador['email']);
         $colaboradorObj->setSituacao($colaborador['situacao']);
         $colaboradorObj->setDtCadastro($colaborador['cadastro']);
+        
+        $colaboradorRepository = new ColaboradorRepository();
+        $colaboradorService = new ColaboradorService($colaboradorRepository);
+        $colaboradorService->create($colaboradorObj);
+        
+    }
 
-        switch($colaborador['situacao']){
-            case 'T':
-                $colaboradorRepository = new ColaboradorRepository();
-                $colaboradorService = new ColaboradorService($colaboradorRepository);
-                print_r($colaboradorService);
-                $colaboradorService->create($colaboradorObj);
-        }
+    public function edit($id)
+    {
+        $colaboradorRepository = new ColaboradorRepository();
+        $colaboradorService = new ColaboradorService($colaboradorRepository);
+
+        $colaborador = InputFilterHelper::filterInputs(INPUT_POST, 
+        [
+            'nome',
+            'email',
+            'situacao',
+            'cadastro',
+            'admissao'
+        ]);
+
+        $colaboradorObj = new Colaborador();
+        $colaboradorObj->setId($id);
+        $colaboradorObj->setNome($colaborador['nome']);
+        $colaboradorObj->setEmail($colaborador['email']);
+        $colaboradorObj->setSituacao($colaborador['situacao']);
+        $colaboradorObj->setDtAdmissao($colaborador['admissao']);
+
+        $colaboradorService->save($colaboradorObj);
     }
 
     public function delete($id)

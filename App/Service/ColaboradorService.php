@@ -39,4 +39,9 @@ class ColaboradorService
     {
         return $this->repository->delete($id);
     }
+
+    public function save(Colaborador $colaborador)
+    {
+        return $this->repository->save($colaborador);
+    }
 }

@@ -22,25 +22,23 @@ class ColaboradorRepository
         $stmt->bindValue(':nome', $colaborador->getNome());
         $stmt->bindValue(':email', $colaborador->getEmail());
         $stmt->bindValue(':situacao', $colaborador->getSituacao());
+    
         return $stmt->execute();
     }
 
     public function save(Colaborador $colaborador)
     {
-        $sql = "UPDATE colaborador SET nome = :nome, email = email, situacao = :situacao, admissao = :admissao, atualizacao = :atualizacao WHERE id = :id";
+        $sql = "UPDATE colaborador SET nome = :nome, email = :email, situacao = :situacao, admissao = :admissao, atualizacao = NOW() WHERE id = :id";
         $stmt = $this->con->prepare($sql);
+        $stmt->bindValue(':id', $colaborador->getId());
         $stmt->bindValue(':nome', $colaborador->getNome());
         $stmt->bindValue(':email', $colaborador->getEmail());
         $stmt->bindValue(':situacao', $colaborador->getSituacao());
-        $stmt->bindValue('admissao:', $colaborador->getDtAdmissao());
-        $stmt->bindValue(':atualizacao', $colaborador->getDtAtualizacao());
+        $stmt->bindValue(':admissao', $colaborador->getDtAdmissao());
         return $stmt->execute();
     }
 
-    public function getById($id)
-    {
-
-    }
+    
 
     public function getAll()
     {
