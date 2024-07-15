@@ -41,7 +41,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addColaborForm" method="POST">
+                <form id="addColaboradorForm" method="POST">
                     <div class="form-group mb-3">
                         <label for="txtNome">Nome</label>
                         <input type="text" class="form-control" id="txtNome" name="nome" >
@@ -50,7 +50,7 @@
                         <label for="txtEmail">Email</label>
                         <input type="text" class="form-control" id="txtEmail" name="email" >
                     </div>
-                    <input type="hidden" name="cadastrado" value="<?php echo date('Y-m-d H:i:s'); ?>">
+                    <input type="hidden" name="cadastro" value="<?php echo date('Y-m-d H:i:s'); ?>">
                     <div class="form-group mb-3">
                         <label for="slcSituacao">Situação</label>
                         <select class="form-select" name="situacao" aria-label="Default select example" id="slcSituacao">
@@ -234,13 +234,13 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 $('#addUserModal').modal('hide');
-               
+                carregaColaborador(paginaAtual);
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso',
                     text: 'Usuário adicionado com sucesso.'
                 });
-                carregaColaborador(paginaAtual);
+                
             },
             error: function() {
                 Swal.fire({

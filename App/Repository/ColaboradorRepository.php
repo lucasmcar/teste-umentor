@@ -17,7 +17,7 @@ class ColaboradorRepository
 
     public function create(Colaborador $colaborador)
     {
-        $sql = "INSERT INTO colaborador(nome, email, situacao, cadastro) VALUES (:nome, :email, :situacao, NOW)";
+        $sql = "INSERT INTO colaborador(nome, email, situacao, cadastro) VALUES (:nome, :email, :situacao, NOW())";
         $stmt = $this->con->prepare($sql);
         $stmt->bindValue(':nome', $colaborador->getNome());
         $stmt->bindValue(':email', $colaborador->getEmail());
