@@ -373,7 +373,7 @@ $(document).ready(function() {
                         row.remove();
                         Swal.fire(
                             'Excluído!',
-                            'Usuário excluído com sucesso.',
+                            'Colaborador excluído com sucesso.',
                             'success'
                         );
                         carregaColaborador(paginaAtual)
@@ -405,16 +405,15 @@ $('#searchInput').on('keyup', function() {
 carregaColaborador();
 
 function formatarDateTime(dateTimeString) {
-    // Divida a string de data e hora
+    
     var [datePart, timePart] = dateTimeString.split(' ');
 
-    // Divida a data em partes [ano, mês, dia]
+    
     var [ano, mes, dia] = datePart.split('-');
 
-    // Reorganize a data no formato dd/mm/yyyy
     var formattedDate = dia + '/' + mes + '/' + ano;
 
-    // Reorganize a data e a hora no formato dd/mm/yyyy hh:mm:ss
+   
     return formattedDate + ' ' + timePart;
 }
 });
